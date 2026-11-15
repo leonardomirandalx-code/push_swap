@@ -88,6 +88,7 @@ int	main(void)
 }*/
 /*
 ft_rotate
+0 - Retornar em caso de pilha vazia ou 1 elemento
 1 - Guardar o primeiro no numa temporaria
 2 - Apontar head para o segundo no
 3 - Next do no guardado em temp a NULL

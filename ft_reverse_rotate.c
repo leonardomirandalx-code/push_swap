@@ -88,7 +88,8 @@ int	main(void)
 }*/
 /*
 ft_rotate
-1 - Guardar o primeiro nó numa temporaria
+0 - Retornar em caso de pilha vazia ou 1 elemento
+1 - Apontar temp para o primeiro nó
 2 - Percorrer com temp até apontar para a penúltima posição
 3 - ft_lstadd_front colocando o ultimo nó (temp->next) no começo
 4 - Apontar a penúltima (guardada em temp) para NULL
