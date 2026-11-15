@@ -87,7 +87,7 @@ int	main(void)
 	return (0);
 }*/
 /*
-ft_rotate
+ft_reverse_rotate
 0 - Retornar em caso de pilha vazia ou 1 elemento
 1 - Apontar temp para o primeiro nó
 2 - Percorrer com temp até apontar para a penúltima posição
