@@ -30,7 +30,7 @@ void	ft_rr(t_list **a, t_list **b)
 	ft_rotate(b);
 	ft_putendl_fd("rr", 1);
 }
-/*
+
 #include <stdio.h>
 
 int	main(void)
@@ -67,8 +67,7 @@ int	main(void)
 		tb = tb->next;
 	}
 	printf("\nLets swap:\n\n");
-	ft_ra(&a);
-	ft_rb(&b);
+	ft_rr(&a, &b);
 	printf("\n");
 	ta = a;
 	tb = b;
@@ -85,7 +84,7 @@ int	main(void)
 		tb = tb->next;
 	}
 	return (0);
-}*/
+}
 /*
 ft_rotate
 0 - Retornar em caso de pilha vazia ou 1 elemento
