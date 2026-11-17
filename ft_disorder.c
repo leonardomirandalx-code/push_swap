@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -6,6 +7,9 @@ typedef struct	s_stack
 	int	value;
 	struct s_stack	*next;
 }	t_stack;
+=======
+#include "push_swap.h"
+>>>>>>> b5528f9 (add new dir commands and struct to .h, also move r_rotate and rotate to commands and some correction on headers and struct name)
 
 unsigned int	ft_lstsize_p(t_stack *lst)
 {
@@ -80,7 +84,40 @@ double	ft_compute_disorder(t_stack *a)
 	return ((double)mistakes/total_pairs);
 }
 
+<<<<<<< HEAD
 int	main(void)
+=======
+
+// double	ft_compute_disorder(t_stack *stack)
+// {
+// 	t_stack	*i;
+// 	t_stack	*j;
+// 	size_t		mistakes;
+// 	size_t		total;
+
+// 	if (!stack || ft_lstsize_p(stack) < 2)
+// 		return (0.0);
+// 	mistakes = 0;
+// 	total = (ft_lstsize_p(stack) * (ft_lstsize_p(stack) - 1) / 2);
+// 	i = stack;
+// 	while (i)
+// 	{
+// 		j = i->next;
+// 		while (j)
+// 		{
+// 			if (i->value > j->value)
+// 				mistakes++;
+// 			j = j->next;
+// 		}
+// 		i = i->next;
+// 	}
+// 	printf("mistakes = %zu\n", mistakes);
+//  	printf("total_pairs = %zu\n", total);
+// 	return ((double)mistakes / total);
+// }
+
+/*int	main(void)
+>>>>>>> b5528f9 (add new dir commands and struct to .h, also move r_rotate and rotate to commands and some correction on headers and struct name)
 {
 	t_stack	*head;
 	int	n;
@@ -101,4 +138,4 @@ int	main(void)
         }
 	printf("%f\n", ft_compute_disorder(tmp));
 	return (0);
-}
+}*/

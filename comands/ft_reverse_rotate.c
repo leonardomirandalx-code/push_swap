@@ -1,8 +1,8 @@
-#include "libft.h"
+#include "push_swap.h"
 
-void	ft_reverse_rotate(t_list **lst)
+void	ft_reverse_rotate(t_stack **lst)
 {
-	t_list	*temp;
+	t_stack	*temp;
 
 	if (!*lst || !(*lst)->next)
 		return ;
@@ -13,19 +13,19 @@ void	ft_reverse_rotate(t_list **lst)
 	temp->next = NULL;
 }
 
-void	ft_rra(t_list **a)
+void	ft_rra(t_stack **a)
 {
 	ft_reverse_rotate(a);
 	ft_putendl_fd("rra", 1);
 }
 
-void	ft_rrb(t_list **b)
+void	ft_rrb(t_stack **b)
 {
 	ft_reverse_rotate(b);
 	ft_putendl_fd("rrb", 1);
 }
 
-void	ft_rrr(t_list **a, t_list **b)
+void	ft_rrr(t_stack **a, t_stack **b)
 {
 	ft_reverse_rotate(a);
 	ft_reverse_rotate(b);
