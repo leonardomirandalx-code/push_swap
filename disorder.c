@@ -1,6 +1,6 @@
 #include "push_swap.h"
 
-double	ft_compute_disorder(t_stack *a)
+double	compute_disorder(t_stack *a)
 {
 	size_t	mistakes;
 	size_t	total_pairs;
