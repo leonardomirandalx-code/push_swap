@@ -16,13 +16,13 @@ void	reverse_rotate(t_stack **stk)
 void	rra(t_stack **a)
 {
 	reverse_rotate(a);
-	ft_putendl_fd("rra", 1);
+	write(1, "rra\n", 4);
 }
 
 void	rrb(t_stack **b)
 {
 	reverse_rotate(b);
-	ft_putendl_fd("rrb", 1);
+	write(1, "rrb\n", 4);
 }
 void	rotate(t_stack **stk)
 {
@@ -39,11 +39,11 @@ void	rotate(t_stack **stk)
 void	ra(t_stack **a)
 {
 	rotate(a);
-	ft_putendl_fd("ra", 1);
+	write(1, "ra\n", 3);
 }
 
 void	rb(t_stack **b)
 {
 	rotate(b);
-	ft_putendl_fd("rb", 1);
+	write(1, "rb\n", 3);
 }
