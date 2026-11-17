@@ -12,6 +12,7 @@ typedef struct	s_stack
 
 typedef enum e_algorithm
 {
+	NONE,
 	SIMPLE,
 	MEDIUM,
 	COMPLEX,
