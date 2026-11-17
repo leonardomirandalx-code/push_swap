@@ -16,7 +16,7 @@ static int	count_words(char const *s, char c)
 	return (count);
 }
 
-static void	free_words(char **words, int count)
+void	free_words(char **words, int count)
 {
 	while (count > 0)
 		free(words[--count]);
