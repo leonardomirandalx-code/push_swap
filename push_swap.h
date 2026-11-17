@@ -3,9 +3,6 @@
 
 #include <stdlib.h>
 
-<<<<<<< HEAD
-#endif
-=======
 typedef struct	s_stack
 {
 	int	value;
@@ -13,4 +10,3 @@ typedef struct	s_stack
 }	t_stack;
 
 #endif
->>>>>>> b5528f9 (add new dir commands and struct to .h, also move r_rotate and rotate to commands and some correction on headers and struct name)
