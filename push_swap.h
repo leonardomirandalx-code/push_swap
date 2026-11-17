@@ -2,6 +2,7 @@
 # define PUSH_SWAP_H
 
 #include <stdlib.h>
+#include <limits.h>
 
 typedef struct	s_stack
 {
@@ -11,6 +12,7 @@ typedef struct	s_stack
 
 typedef enum e_algorithm
 {
+	NONE,
 	SIMPLE,
 	MEDIUM,
 	COMPLEX,
