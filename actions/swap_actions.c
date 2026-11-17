@@ -23,32 +23,6 @@ void	sb(t_stack **b)
 	swap(b);
 	write(1, "sb\n", 3);
 }
-/*
-#include <stdio.h>
-int     main(void)
-{
-        t_stack *head;
-        int     n;
-
-        n = 0;
-        head = NULL;
-        while (n < 9)
-        {
-                ft_stackadd_bottom(&head, ft_stacknew(n));
-                n++;
-        }
-        ft_stackadd_bottom(&head, ft_stacknew(-1));
-        ft_stackadd_bottom(&head, ft_stacknew(-12));
-        t_stack *tmp = head;
-        sa(&head);
-	while (head)
-        {
-                printf("%d\n", head->value);
-                head = head->next;
-        }
-        return (0);
-}*/
-
 #include <stdio.h>
 
 static void	print_stacks(t_stack *a, t_stack *b, char *msg)
