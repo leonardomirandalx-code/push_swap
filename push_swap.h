@@ -38,6 +38,6 @@ unsigned int	ft_stacksize(t_stack *stk);
 t_stack	*ft_stacklast(t_stack *stk);
 void	ft_stackadd_bottom(t_stack **stk, t_stack *new);
 t_stack	*ft_stacknew(int value);
-double	ft_compute_disorder(t_stack *a);
+double	compute_disorder(t_stack *a);
 
 #endif
