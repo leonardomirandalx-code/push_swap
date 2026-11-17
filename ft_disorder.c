@@ -1,4 +1,4 @@
-#include "libft/libft.h"
+#include <stdlib.h>
 #include <stdio.h>
 
 typedef struct	s_stack
@@ -47,7 +47,7 @@ t_stack	*ft_lstnew_p(int content)
 {
 	t_stack	*new;
 
-	new = malloc(sizeof(t_list));
+	new = malloc(sizeof(t_stack));
 	if (new == NULL)
 		return (NULL);
 	new->value = content;
@@ -80,35 +80,6 @@ double	ft_compute_disorder(t_stack *a)
 	}
 	return ((double)mistakes/total_pairs);
 }
-
-
-// double	ft_compute_disorder(t_stack *stack)
-// {
-// 	t_stack	*i;
-// 	t_stack	*j;
-// 	size_t		mistakes;
-// 	size_t		total;
-
-// 	if (!stack || ft_lstsize_p(stack) < 2)
-// 		return (0.0);
-// 	mistakes = 0;
-// 	total = (ft_lstsize_p(stack) * (ft_lstsize_p(stack) - 1) / 2);
-// 	i = stack;
-// 	while (i)
-// 	{
-// 		j = i->next;
-// 		while (j)
-// 		{
-// 			if (i->value > j->value)
-// 				mistakes++;
-// 			j = j->next;
-// 		}
-// 		i = i->next;
-// 	}
-// 	printf("mistakes = %zu\n", mistakes);
-//  	printf("total_pairs = %zu\n", total);
-// 	return ((double)mistakes / total);
-// }
 
 int	main(void)
 {
