@@ -1,4 +1,4 @@
-#include "push_swap.h"
+nt#include "push_swap.h"
 
 int	is_number(char *str)
 {

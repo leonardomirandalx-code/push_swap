@@ -1,53 +1,5 @@
 #include "push_swap.h"
 
-unsigned int	ft_lstsize_p(t_stack *lst)
-{
-	unsigned int	i;
-
-	if (!lst)
-		return (0);
-	i = 1;
-	while (lst->next)
-	{
-		i++;
-		lst = lst->next;
-	}
-	return (i);
-}
-
-t_stack	*ft_lstlast_p(t_stack *lst)
-{
-	if (!lst)
-		return (NULL);
-	while (lst->next)
-		lst = lst-> next;
-	return (lst);
-}
-
-void	ft_lstadd_back_p(t_stack **lst, t_stack *new)
-{
-	if (!lst || !new)
-		return ;
-	if (*lst == NULL)
-	{
-		*lst = new;
-		return ;
-	}
-	ft_lstlast_p(*lst)->next = new;
-}
-
-t_stack	*ft_lstnew_p(int content)
-{
-	t_stack	*new;
-
-	new = malloc(sizeof(t_stack));
-	if (new == NULL)
-		return (NULL);
-	new->value = content;
-	new->next = NULL;
-	return (new);
-}
-
 double	ft_compute_disorder(t_stack *a)
 {
 	size_t	mistakes;
@@ -68,41 +20,13 @@ double	ft_compute_disorder(t_stack *a)
 			temp = temp->next;
 			total_pairs++;
 		}
-		a = a->next;	
+		a = a->next;
 	}
-	return ((double)mistakes/total_pairs);
+	return ((double)mistakes / total_pairs);
 }
-
-
-// double	ft_compute_disorder(t_stack *stack)
-// {
-// 	t_stack	*i;
-// 	t_stack	*j;
-// 	size_t		mistakes;
-// 	size_t		total;
-
-// 	if (!stack || ft_lstsize_p(stack) < 2)
-// 		return (0.0);
-// 	mistakes = 0;
-// 	total = (ft_lstsize_p(stack) * (ft_lstsize_p(stack) - 1) / 2);
-// 	i = stack;
-// 	while (i)
-// 	{
-// 		j = i->next;
-// 		while (j)
-// 		{
-// 			if (i->value > j->value)
-// 				mistakes++;
-// 			j = j->next;
-// 		}
-// 		i = i->next;
-// 	}
-// 	printf("mistakes = %zu\n", mistakes);
-//  	printf("total_pairs = %zu\n", total);
-// 	return ((double)mistakes / total);
-// }
-
-/*int	main(void)
+/*
+#include <stdio.h>
+int	main(void)
 {
 	t_stack	*head;
 	int	n;
@@ -111,10 +35,11 @@ double	ft_compute_disorder(t_stack *a)
 	head = NULL;
 	while (n < 9)
 	{
-		ft_lstadd_back_p(&head, ft_lstnew_p(n));
+		ft_stackadd_bottom(&head, ft_stacknew(n));
 		n++;
 	}
-	ft_lstadd_back_p(&head, ft_lstnew_p(-1));
+	ft_stackadd_bottom(&head, ft_stacknew(-1));
+	ft_stackadd_bottom(&head, ft_stacknew(-12));
 	t_stack	*tmp = head;
 	while (head)
         {
