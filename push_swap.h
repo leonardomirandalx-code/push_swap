@@ -26,6 +26,12 @@ typedef enum e_token_type
 	FLAG
 }	t_token_type;
 
+typedef struct s_options
+{
+	t_algorithm	flag;
+	int			bench;
+}	t_options;
+
 char	**ft_split(char const *s, char c);
 int	h_atoi(const char *str);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
