@@ -1,28 +1,30 @@
 #include "push_swap.h"
 
-int	ft_atoi(const char *str)
+int	h_atoi(const char *str, int *number)
 {
-	int	i;
-	int	sign;
-	int	result;
+	size_t		i;
+	int			sign;
+	long long	result;
 
 	i = 0;
 	sign = 1;
 	result = 0;
-	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
-		i++;
 	if (str[i] == '-' || str[i] == '+')
 	{
 		if (str[i] == '-')
 			sign = -1;
 		i++;
 	}
-	while (str[i] >= '0' && str[i] <= '9')
+	while (str[i])
 	{
 		result = result * 10 + (str[i] - '0');
+		if ((sign == 1 && result > INT_MAX)
+			|| (sign == -1 && result > (long long)INT_MAX + 1))
+			return (1);
 		i++;
 	}
-	return (result * sign);
+	*number = (int)(result * sign);
+	return (0);
 }
 
 char	*ft_substr(char const *s, unsigned int start, size_t len)
