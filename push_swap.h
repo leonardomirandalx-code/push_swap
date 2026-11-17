@@ -2,6 +2,7 @@
 # define PUSH_SWAP_H
 
 #include <stdlib.h>
+#include <limits.h>
 
 typedef struct	s_stack
 {
