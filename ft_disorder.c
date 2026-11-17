@@ -1,15 +1,4 @@
-<<<<<<< HEAD
-#include <stdlib.h>
-#include <stdio.h>
-
-typedef struct	s_stack
-{
-	int	value;
-	struct s_stack	*next;
-}	t_stack;
-=======
 #include "push_swap.h"
->>>>>>> b5528f9 (add new dir commands and struct to .h, also move r_rotate and rotate to commands and some correction on headers and struct name)
 
 unsigned int	ft_lstsize_p(t_stack *lst)
 {
@@ -84,9 +73,6 @@ double	ft_compute_disorder(t_stack *a)
 	return ((double)mistakes/total_pairs);
 }
 
-<<<<<<< HEAD
-int	main(void)
-=======
 
 // double	ft_compute_disorder(t_stack *stack)
 // {
@@ -117,7 +103,6 @@ int	main(void)
 // }
 
 /*int	main(void)
->>>>>>> b5528f9 (add new dir commands and struct to .h, also move r_rotate and rotate to commands and some correction on headers and struct name)
 {
 	t_stack	*head;
 	int	n;

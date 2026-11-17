@@ -9,4 +9,19 @@ typedef struct	s_stack
 	struct s_stack	*next;
 }	t_stack;
 
+typedef enum e_algorithm
+{
+	SIMPLE,
+	MEDIUM,
+	COMPLEX,
+	ADAPTIVE
+}	t_algorithm;
+
+typedef enum e_token_type
+{
+	INVALID,
+	NUMBER,
+	FLAG
+}	t_token_type;
+
 #endif
