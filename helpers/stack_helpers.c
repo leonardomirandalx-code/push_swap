@@ -47,3 +47,37 @@ t_stack	*ft_stacknew(int value)
 	new->next = NULL;
 	return (new);
 }
+
+void	ft_stackadd_top(t_stack **stk, t_stack *new)
+{
+	t_stack	*temp;
+
+	if (!stk || !new)
+		return ;
+	temp = *stk;
+	*stk = new;
+	new->next = temp;
+}
+
+#include <stdio.h>
+int     main(void)
+{
+        t_stack *head;
+        int     n;
+
+        n = 0;
+        head = NULL;
+        while (n < 5)
+        {
+                ft_stackadd_bottom(&head, ft_stacknew(n));
+                n++;
+        }
+	ft_stackadd_top(&head, ft_stacknew(5));
+	ft_stackadd_top(&head, ft_stacknew(5));
+        while (head)
+        {
+                printf("%d\n", head->value);
+                head = head->next;
+        }
+        return (0);
+}
