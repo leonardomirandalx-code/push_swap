@@ -61,8 +61,8 @@ double	ft_compute_disorder(t_stack *a)
 	size_t	total_pairs;
 	t_stack	*temp;
 
-	if (!a->next)
-		return (1);
+	if (!a || !a->next)
+		return (0);
 	mistakes = 0;
 	total_pairs = 0;
 	while (a)
@@ -75,8 +75,7 @@ double	ft_compute_disorder(t_stack *a)
 			temp = temp->next;
 			total_pairs++;
 		}
-		a = a->next;
-		
+		a = a->next;	
 	}
 	return ((double)mistakes/total_pairs);
 }
@@ -88,7 +87,7 @@ int	main(void)
 
 	n = 0;
 	head = NULL;
-	while (n < 20)
+	while (n < 9)
 	{
 		ft_lstadd_back_p(&head, ft_lstnew_p(n));
 		n++;
