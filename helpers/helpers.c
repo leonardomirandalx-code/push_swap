@@ -1,7 +1,5 @@
 #include "push_swap.h"
 
-#include <limits.h>
-
 int	h_atoi(const char *str, int *number)
 {
 	size_t		i;

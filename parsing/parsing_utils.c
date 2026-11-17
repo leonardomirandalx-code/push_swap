@@ -30,11 +30,3 @@ int	is_flag(char *str)
 	return (INVALID);
 }
 
-int	validate_token(char *token)
-{
-	if (is_number(token))
-		return (NUMBER);
-	if (is_flag(token))
-		return (FLAG);
-	return (INVALID);
-}

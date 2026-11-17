@@ -1,15 +1,15 @@
 #include "push_swap.h"
 
-void	reverse_rotate(t_stack **lst)
+void	reverse_rotate(t_stack **stk)
 {
 	t_stack	*temp;
 
-	if (!*lst || !(*lst)->next)
+	if (!*stk || !(*stk)->next)
 		return ;
-	temp = *lst;
+	temp = *stk;
 	while (temp->next->next)
 		temp = temp->next;
-	ft_lstadd_front(lst, temp->next);
+	ft_stackadd_top(stk, temp->next);
 	temp->next = NULL;
 }
 
@@ -24,16 +24,16 @@ void	rrb(t_stack **b)
 	reverse_rotate(b);
 	ft_putendl_fd("rrb", 1);
 }
-void	rotate(t_stack **lst)
+void	rotate(t_stack **stk)
 {
 	t_stack	*temp;
 
-	if (!*lst || !(*lst)->next)
+	if (!*stk || !(*stk)->next)
 		return ;
-	temp = *lst;
-	*lst = (*lst)->next;
+	temp = *stk;
+	*stk = (*stk)->next;
 	temp->next = NULL;
-	ft_lstadd_back(lst, temp);
+	ft_stackadd_bottom(stk, temp);
 }
 
 void	ra(t_stack **a)
