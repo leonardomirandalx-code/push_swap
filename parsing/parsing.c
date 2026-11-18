@@ -1,33 +1,41 @@
 #include "push_swap.h"
 
-void	validation(char **tokens, t_options op, t_algorithm method)
+int	validation(char **tokens, t_options *op, t_stack **stack_a)
 {
-	int i;
+	int			i;
+	int			number;
+	t_stack		*new;
+	t_algorithm	method;
+
 	i = 0;
-		while (tokens[i])
+	while (tokens[i])
+	{
+		if (is_number(tokens[i]) == NUMBER)
 		{
-			if (is_number(tokens[i]) == NUMBER)
-				h_atoi(tokens[i], );
-			else if (!ft_strcmp(tokens[i], "--bench"))
-				op.bench = 1;
-			else if ((method = is_flag(tokens[i])) != NONE)
-				op.flag = method;
-			else
-			{
-				free_words(tokens, i + 1);
+			if (h_atoi(tokens[i], &number))
 				return (1);
-			}
-			i++;
+			new = new_stack(number);
+			if (!new)
+				return (1);
+			add_bottom(stack_a, new);
 		}
-		free_words(tokens, i);
+		else if (!ft_strcmp(tokens[i], "--bench"))
+			op->bench = 1;
+		else if ((method = is_flag(tokens[i])) != NONE)
+			op->flag = method;
+		else
+			return (1);
+		i++;
+	}
+	return (0);
 }
 
-int	parse_args(int argc, char **argv, t_options *options)
+int	parse_args(int argc, char **argv, t_options *options,
+		t_stack **stack_a)
 {
-	char		**split;
-	t_algorithm	method;
-	t_options	op;
-	int			i;
+	char	**split;
+	int		i;
+	int		count;
 
 	i = 1;
 	while (i < argc)
@@ -35,7 +43,13 @@ int	parse_args(int argc, char **argv, t_options *options)
 		split = ft_split(argv[i], ' ');
 		if (!split)
 			return (1);
-		validation(split, op, method);
+		count = count_words(argv[i], ' ');
+		if (validation(split, options, stack_a))
+		{
+			free_words(split, count);
+			return (1);
+		}
+		free_words(split, count);
 		i++;
 	}
 	return (0);

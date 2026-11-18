@@ -1,6 +1,6 @@
 #include "push_swap.h"
 
-unsigned int	ft_stacksize(t_stack *stk)
+unsigned int	stacksize(t_stack *stk)
 {
 	unsigned int	i;
 
@@ -15,7 +15,7 @@ unsigned int	ft_stacksize(t_stack *stk)
 	return (i);
 }
 
-t_stack	*ft_stacklast(t_stack *stk)
+t_stack	*find_bottom(t_stack *stk)
 {
 	if (!stk)
 		return (NULL);
@@ -24,7 +24,7 @@ t_stack	*ft_stacklast(t_stack *stk)
 	return (stk);
 }
 
-void	ft_stackadd_bottom(t_stack **stk, t_stack *new)
+void	add_bottom(t_stack **stk, t_stack *new)
 {
 	if (!stk || !new)
 		return ;
@@ -33,10 +33,10 @@ void	ft_stackadd_bottom(t_stack **stk, t_stack *new)
 		*stk = new;
 		return ;
 	}
-	ft_stacklast(*stk)->next = new;
+	find_bottom(*stk)->next = new;
 }
 
-t_stack	*ft_stacknew(int value)
+t_stack	*new_stack(int value)
 {
 	t_stack	*new;
 
@@ -48,7 +48,7 @@ t_stack	*ft_stacknew(int value)
 	return (new);
 }
 
-void	ft_stackadd_top(t_stack **stk, t_stack *new)
+void	add_top(t_stack **stk, t_stack *new)
 {
 	t_stack	*temp;
 
