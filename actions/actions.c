@@ -9,7 +9,7 @@ void	reverse_rotate(t_stack **stk)
 	temp = *stk;
 	while (temp->next->next)
 		temp = temp->next;
-	ft_stackadd_top(stk, temp->next);
+	add_top(stk, temp->next);
 	temp->next = NULL;
 }
 
@@ -24,6 +24,7 @@ void	rrb(t_stack **b)
 	reverse_rotate(b);
 	write(1, "rrb\n", 4);
 }
+
 void	rotate(t_stack **stk)
 {
 	t_stack	*temp;
@@ -33,7 +34,7 @@ void	rotate(t_stack **stk)
 	temp = *stk;
 	*stk = (*stk)->next;
 	temp->next = NULL;
-	ft_stackadd_bottom(stk, temp);
+	add_bottom(stk, temp);
 }
 
 void	ra(t_stack **a)
