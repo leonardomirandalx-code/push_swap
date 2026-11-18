@@ -4,7 +4,7 @@ void	swap(t_stack **stk)
 {
 	t_stack	*temp;
 
-	if (!*stk || !(*stk)->next)
+	if (!stk || !*stk || !(*stk)->next)
 		return ;
 	temp = *stk;
 	*stk = temp->next;
@@ -12,14 +12,11 @@ void	swap(t_stack **stk)
 	(*stk)->next = temp;
 }
 
-void	sa(t_stack **a)
+void	sx(t_stack **stk, char name)
 {
-	swap(a);
-	write(1, "sa\n", 3);
-}
-
-void	sb(t_stack **b)
-{
-	swap(b);
-	write(1, "sb\n", 3);
+	swap(stk);
+	if (name == 'a')
+		write(1, "sa\n", 3);
+	else
+		write(1, "sb\n", 3);
 }

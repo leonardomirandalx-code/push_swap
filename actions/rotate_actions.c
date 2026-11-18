@@ -4,7 +4,7 @@ void	reverse_rotate(t_stack **stk)
 {
 	t_stack	*temp;
 
-	if (!*stk || !(*stk)->next)
+	if (!stk || !*stk || !(*stk)->next)
 		return ;
 	temp = *stk;
 	while (temp->next->next)
@@ -13,23 +13,20 @@ void	reverse_rotate(t_stack **stk)
 	temp->next = NULL;
 }
 
-void	rra(t_stack **a)
+void	rrx(t_stack **stk, char name)
 {
-	reverse_rotate(a);
-	write(1, "rra\n", 4);
-}
-
-void	rrb(t_stack **b)
-{
-	reverse_rotate(b);
-	write(1, "rrb\n", 4);
+	reverse_rotate(stk);
+	if (name == 'a')
+		write(1, "rra\n", 4);
+	else
+		write(1, "rrb\n", 4);
 }
 
 void	rotate(t_stack **stk)
 {
 	t_stack	*temp;
 
-	if (!*stk || !(*stk)->next)
+	if (!stk || !*stk || !(*stk)->next)
 		return ;
 	temp = *stk;
 	*stk = (*stk)->next;
@@ -37,14 +34,11 @@ void	rotate(t_stack **stk)
 	add_bottom(stk, temp);
 }
 
-void	ra(t_stack **a)
+void	rx(t_stack **stk, char name)
 {
-	rotate(a);
-	write(1, "ra\n", 3);
-}
-
-void	rb(t_stack **b)
-{
-	rotate(b);
-	write(1, "rb\n", 3);
+	rotate(stk);
+	if (name == 'a')
+		write(1, "ra\n", 3);
+	else
+		write(1, "rb\n", 3);
 }
