@@ -1,6 +1,6 @@
 #include "push_swap.h"
 
-double	compute_disorder(t_stack *a)
+float	compute_disorder(t_stack *a)
 {
 	size_t	mistakes;
 	size_t	total_pairs;
@@ -22,7 +22,7 @@ double	compute_disorder(t_stack *a)
 		}
 		a = a->next;
 	}
-	return ((double)mistakes / total_pairs);
+	return ((float)mistakes / total_pairs);
 }
 /*
 #include <stdio.h>

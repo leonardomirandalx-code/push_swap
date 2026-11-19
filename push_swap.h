@@ -56,7 +56,7 @@ typedef struct	s_data
 	t_stack	*b;
 	t_options	options;
 	float	disorder;
-	static size_t	ops[OP_COUNT];
+	size_t	ops[OP_COUNT];
 }	t_data;
 
 
@@ -82,7 +82,7 @@ void			add_top(t_stack **stk, t_stack *new);
 t_stack			*new_stack(int value);
 void			free_stack(t_stack **stack);
 
-double			compute_disorder(t_stack *a);
+float			compute_disorder(t_stack *a);
 void			swap(t_stack **stk, char name);
 void			ss(t_stack **a, t_stack **b);
 void			reverse_rotate(t_stack **stk, char name);
