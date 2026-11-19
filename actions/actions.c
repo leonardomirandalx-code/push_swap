@@ -14,7 +14,7 @@ void	push(t_stack **src, t_stack **dest, char name)
 	(*dest)->next = temp_dest;
 	if (name == 'a')
 		write(1, "pa\n", 3);
-	else
+	else if (name == 'b')
 		write(1, "pb\n", 3);
 }
 
@@ -31,7 +31,7 @@ void	reverse_rotate(t_stack **stk, char name)
 	temp->next = NULL;
 	if (name == 'a')
 		write(1, "rra\n", 4);
-	else
+	else if (name == 'b')
 		write(1, "rrb\n", 4);
 }
 
@@ -47,7 +47,7 @@ void	rotate(t_stack **stk, char name)
 	add_bottom(stk, temp);
 	if (name == 'a')
 		write(1, "ra\n", 3);
-	else
+	else if (name == 'b')
 		write(1, "rb\n", 3);
 }
 
@@ -63,6 +63,6 @@ void	swap(t_stack **stk, char name)
 	(*stk)->next = temp;
 	if (name == 'a')
 		write(1, "sa\n", 3);
-	else
+	else if (name == 'b')
 		write(1, "sb\n", 3);
 }
