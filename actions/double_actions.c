@@ -2,7 +2,7 @@
 
 void	rrr(t_stack **a, t_stack **b)
 {
-	if (!a || !*a || !(*a)->next || !b || !*b || !(*b)->next)
+	if ((!a || !b) || ((!*a || !(*a)->next) && (!*b || !(*b)->next)))
 		return ;
 	reverse_rotate(a, 0);
 	reverse_rotate(b, 0);
@@ -11,7 +11,7 @@ void	rrr(t_stack **a, t_stack **b)
 
 void	rr(t_stack **a, t_stack **b)
 {
-	if (!a || !*a || !(*a)->next || !b || !*b || !(*b)->next)
+	if ((!a || !b) || ((!*a || !(*a)->next) && (!*b || !(*b)->next)))
 		return ;
 	rotate(a, 0);
 	rotate(b, 0);
@@ -20,7 +20,7 @@ void	rr(t_stack **a, t_stack **b)
 
 void	ss(t_stack **a, t_stack **b)
 {
-	if (!a || !*a || !(*a)->next || !b || !*b || !(*b)->next)
+	if ((!a || !b) || ((!*a || !(*a)->next) && (!*b || !(*b)->next)))
 		return ;
 	swap(a, 0);
 	swap(b, 0);

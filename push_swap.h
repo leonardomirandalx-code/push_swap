@@ -56,17 +56,12 @@ t_stack			*new_stack(int value);
 void			free_stack(t_stack **stack);
 
 double			compute_disorder(t_stack *a);
-void			swap(t_stack **stk);
-void			sa(t_stack **a);
-void			sb(t_stack **b);
+void			swap(t_stack **stk, char name);
 void			ss(t_stack **a, t_stack **b);
-void			reverse_rotate(t_stack **stk);
-void			rra(t_stack **a);
-void			rrb(t_stack **b);
+void			reverse_rotate(t_stack **stk, char name);
 void			rrr(t_stack **a, t_stack **b);
-void			rotate(t_stack **stk);
-void			ra(t_stack **a);
-void			rb(t_stack **b);
+void			rotate(t_stack **stk, char name);
 void			rr(t_stack **a, t_stack **b);
+void			push(t_stack **src, t_stack **dest, char name);
 
 #endif

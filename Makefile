@@ -9,8 +9,12 @@ SRC = main.c \
       parsing/parsing_utils.c \
       helpers/h_split.c \
       helpers/helpers.c \
-	  helpers/stack_helpers.c \
-	  helpers/stack_utils.c
+      helpers/stack_helpers.c \
+      helpers/stack_utils.c \
+      actions/actions.c \
+      actions/double_actions.c \
+      disorder.c
+
 
 OBJ = $(SRC:.c=.o)
 
