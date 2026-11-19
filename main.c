@@ -14,6 +14,7 @@ int	main(int argc, char **argv)
 		return (0);
 	if (parse_args(argc, argv, &options, &stack_a))
 	{
+		free_stack(&stack_a);
 		write(2, "Error\n", 6);
 		return (1);
 	}
@@ -25,5 +26,6 @@ int	main(int argc, char **argv)
 	}
 	printf("Algorithm: %d\n", options.flag);
 	printf("Bench: %d\n", options.bench);
+	free_stack(&stack_a);
 	return (0);
 }

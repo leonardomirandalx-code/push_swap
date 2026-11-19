@@ -44,6 +44,7 @@ int				ft_strcmp(char *s1, char *s2);
 
 int				is_number(char *str);
 int				is_flag(char *str);
+int				is_dup(t_stack *stack);
 int				parse_args(int argc, char **argv, t_options *options, t_stack **stack_a);
 int				validation(char **tokens, t_options *op, t_stack **stack_a);
 
@@ -52,6 +53,7 @@ t_stack			*find_bottom(t_stack *stk);
 void			add_bottom(t_stack **stk, t_stack *new);
 void			add_top(t_stack **stk, t_stack *new);
 t_stack			*new_stack(int value);
+void			free_stack(t_stack **stack);
 
 double			compute_disorder(t_stack *a);
 void			swap(t_stack **stk);

@@ -27,6 +27,8 @@ int	validation(char **tokens, t_options *op, t_stack **stack_a)
 			return (1);
 		i++;
 	}
+	if (is_dup(*stack_a))
+		return (1);
 	return (0);
 }
 
@@ -44,7 +46,7 @@ int	parse_args(int argc, char **argv, t_options *options,
 		if (!split)
 			return (1);
 		count = count_words(argv[i], ' ');
-		if (validation(split, options, stack_a))
+		if (count == 0 || validation(split, options, stack_a))
 		{
 			free_words(split, count);
 			return (1);

@@ -30,3 +30,22 @@ int	is_flag(char *str)
 	return (INVALID);
 }
 
+int	is_dup(t_stack *stack)
+{
+	t_stack	*current;
+	t_stack	*check;
+
+	current = stack;
+	while (current)
+	{
+		check = current->next;
+		while (check)
+		{
+			if (current->value == check->value)
+				return (1);
+			check = check->next;
+		}
+		current = current->next;
+	}
+	return (0);
+}

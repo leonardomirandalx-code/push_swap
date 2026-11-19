@@ -10,6 +10,7 @@ SRC = main.c \
       helpers/h_split.c \
       helpers/helpers.c \
 	  helpers/stack_helpers.c \
+	  helpers/stack_utils.c
 
 OBJ = $(SRC:.c=.o)
 
