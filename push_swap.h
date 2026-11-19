@@ -33,6 +33,33 @@ typedef struct s_options
 	int			bench;
 }	t_options;
 
+//estrutura bench
+typedef enum e_actions
+{
+	SA,
+	SB,
+	SS,
+	PA,
+	PB,
+	RA,
+	RB,
+	RR,
+	RRA,
+	RRB,
+	RRR,
+	OP_COUNT
+}	t_actions;
+
+typedef struct	s_data
+{
+	t_stack	*a;
+	t_stack	*b;
+	t_options	options;
+	float	disorder;
+	static size_t	ops[OP_COUNT];
+}	t_data;
+
+
 char			**ft_split(char const *s, char c);
 void			free_words(char **words, int count);
 int				count_words(char const *s, char c);
