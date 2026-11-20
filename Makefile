@@ -4,8 +4,7 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -I.
 RM = rm -f
 
-SRC = main.c \
-      parsing/parsing.c \
+SRC = parsing/parsing.c \
       parsing/parsing_utils.c \
       helpers/h_split.c \
       helpers/helpers.c \
@@ -13,7 +12,11 @@ SRC = main.c \
       helpers/stack_utils.c \
       actions/actions.c \
       actions/double_actions.c \
-      disorder.c
+      core/disorder.c \
+      core/main.c \
+      core/selector.c \
+      bench/bench.c
+
 
 
 OBJ = $(SRC:.c=.o)
