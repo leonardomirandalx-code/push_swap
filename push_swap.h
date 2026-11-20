@@ -5,6 +5,8 @@
 # include <limits.h>
 # include <unistd.h>
 
+# define DEC "0123456789"
+
 typedef struct s_stack
 {
 	int				value;
@@ -91,4 +93,9 @@ void			rr(t_data *data);
 void			reverse_rotate(t_data *data, t_stack **stk, char name);
 void			rrr(t_data *data);
 void			push(t_data *data, t_stack **src, t_stack **dest, char name);
+
+void			select_algorithm(t_data *data);
+void			print_bench(t_data *data);
+void			putnbr(size_t n);
+void			putstr(char *str);
 #endif
