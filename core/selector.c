@@ -11,3 +11,9 @@ void	select_algorithm(t_data *data)
 	else if (data->options.flag == ADAPTIVE)
 		adaptive_algorithm(data);
 }
+
+void	select_bench(t_data *data)
+{
+	if (data->options.bench)
+		print_bench(data);
+}

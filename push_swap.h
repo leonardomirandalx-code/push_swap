@@ -98,4 +98,5 @@ void			select_algorithm(t_data *data);
 void			print_bench(t_data *data);
 void			putnbr(size_t n);
 void			putstr(char *str);
+void			select_bench(t_data *data);
 #endif
