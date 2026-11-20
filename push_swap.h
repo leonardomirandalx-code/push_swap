@@ -1,9 +1,9 @@
 #ifndef PUSH_SWAP_H
 # define PUSH_SWAP_H
 
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
+# include <stdlib.h>
+# include <limits.h>
+# include <unistd.h>
 
 typedef struct s_stack
 {
@@ -72,7 +72,8 @@ int				ft_strcmp(char *s1, char *s2);
 int				is_number(char *str);
 int				is_flag(char *str);
 int				is_dup(t_stack *stack);
-int				parse_args(int argc, char **argv, t_options *options, t_stack **stack_a);
+int				parse_args(int argc, char **argv, t_options *options,
+								 t_stack **stack_a);
 int				validation(char **tokens, t_options *op, t_stack **stack_a);
 
 unsigned int	stacksize(t_stack *stk);
@@ -83,12 +84,11 @@ t_stack			*new_stack(int value);
 void			free_stack(t_stack **stack);
 
 float			compute_disorder(t_stack *a);
-void			swap(t_stack **stk, char name);
-void			ss(t_stack **a, t_stack **b);
-void			reverse_rotate(t_stack **stk, char name);
-void			rrr(t_stack **a, t_stack **b);
-void			rotate(t_stack **stk, char name);
-void			rr(t_stack **a, t_stack **b);
-void			push(t_stack **src, t_stack **dest, char name);
-
+void			swap(t_data *data, t_stack **stk, char name);
+void			ss(t_data *data);
+void			rotate(t_data *data, t_stack **stk, char name);
+void			rr(t_data *data);
+void			reverse_rotate(t_data *data, t_stack **stk, char name);
+void			rrr(t_data *data);
+void			push(t_data *data, t_stack **src, t_stack **dest, char name);
 #endif
