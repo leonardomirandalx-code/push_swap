@@ -42,10 +42,10 @@ int	parse_args(int argc, char **argv, t_options *options,
 	i = 1;
 	while (i < argc)
 	{
-		split = ft_split(argv[i], ' ');
+		split = ft_split(argv[i]);
 		if (!split)
 			return (1);
-		count = count_words(argv[i], ' ');
+		count = count_words(argv[i]);
 		if (count == 0 || validation(split, options, stack_a))
 		{
 			free_words(split, count);
