@@ -13,3 +13,9 @@ void	free_stack(t_stack **stack)
 		*stack = temp;
 	}
 }
+
+void	free_all(t_stack **a, t_stack **b)
+{
+	free_stack(a);
+	free_stack(b);
+}
