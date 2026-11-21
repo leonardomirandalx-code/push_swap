@@ -16,7 +16,6 @@ int	main(int argc, char **argv)
 	data.disorder = compute_disorder(data.a);
 	select_algorithm(&data);
 	select_bench(&data);
-	free_stack(&data.a);
-	free_stack(&data.b);
+	free_all(&data.a, &data.b);
 	return (0);
 }
