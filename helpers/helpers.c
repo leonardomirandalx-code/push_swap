@@ -27,32 +27,6 @@ int	h_atoi(const char *str, int *number)
 	return (0);
 }
 
-char	*ft_substr(char const *s, unsigned int start, size_t len)
-{
-	char	*sub;
-	size_t	i;
-	size_t	s_len;
-
-	if (!s)
-		return (NULL);
-	s_len = ft_strlen(s);
-	if (start >= s_len)
-		len = 0;
-	else if (len > s_len - start)
-		len = s_len - start;
-	sub = malloc(len + 1);
-	if (!sub)
-		return (NULL);
-	i = 0;
-	while (i < len)
-	{
-		sub[i] = s[start + i];
-		i++;
-	}
-	sub[i] = '\0';
-	return (sub);
-}
-
 size_t	ft_strlen(const char *s)
 {
 	size_t	i;
@@ -71,4 +45,20 @@ int	ft_strcmp(char *s1, char *s2)
 	while (s1[i] && s1[i] == s2[i])
 		i++;
 	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+}
+
+void putstr(char *str)
+{
+    while (*str)
+    {
+        write(2, str, 1);
+        str++;
+    }
+}
+
+void putnbr(size_t n)
+{
+    if (n >= 10)
+        putnbr(n / 10);
+    write(2, &DEC[n % 10], 1);
 }

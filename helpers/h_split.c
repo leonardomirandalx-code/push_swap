@@ -5,6 +5,32 @@ static int	is_space(char c)
 	return (c == ' ' || (c >= '\t' && c <= '\r'));
 }
 
+char	*ft_substr(char const *s, unsigned int start, size_t len)
+{
+	char	*sub;
+	size_t	i;
+	size_t	s_len;
+
+	if (!s)
+		return (NULL);
+	s_len = ft_strlen(s);
+	if (start >= s_len)
+		len = 0;
+	else if (len > s_len - start)
+		len = s_len - start;
+	sub = malloc(len + 1);
+	if (!sub)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		sub[i] = s[start + i];
+		i++;
+	}
+	sub[i] = '\0';
+	return (sub);
+}
+
 int	count_words(char const *s)
 {
 	int	i;
@@ -19,13 +45,6 @@ int	count_words(char const *s)
 		i++;
 	}
 	return (count);
-}
-
-void	free_words(char **words, int count)
-{
-	while (count > 0)
-		free(words[--count]);
-	free(words);
 }
 
 static int	fill_words(char **words, char const *s)

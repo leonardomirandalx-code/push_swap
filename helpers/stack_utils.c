@@ -19,3 +19,10 @@ void	free_all(t_stack **a, t_stack **b)
 	free_stack(a);
 	free_stack(b);
 }
+
+void	free_words(char **words, int count)
+{
+	while (count > 0)
+		free(words[--count]);
+	free(words);
+}

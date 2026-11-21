@@ -1,21 +1,5 @@
 #include "push_swap.h"
 
-void putstr(char *str)
-{
-    while (*str)
-    {
-        write(2, str, 1);
-        str++;
-    }
-}
-
-void putnbr(size_t n)
-{
-    if (n >= 10)
-        putnbr(n / 10);
-    write(2, &DEC[n % 10], 1);
-}
-
 static void put_disorder(float disorder)
 {
     size_t whole;
