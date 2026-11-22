@@ -15,7 +15,8 @@ SRC = parsing/parsing.c \
       core/disorder.c \
       core/main.c \
       core/selector.c \
-      bench/bench.c
+      bench/bench.c \
+      algorithms/simple.c
 
 
 

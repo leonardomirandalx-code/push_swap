@@ -84,6 +84,7 @@ void			add_top(t_stack **stk, t_stack *new);
 t_stack			*new_stack(int value);
 void			free_stack(t_stack **stack);
 void			free_all(t_stack **a, t_stack **b);
+int			is_sorted(t_stack *a);
 
 float			compute_disorder(t_stack *a);
 void			swap(t_data *data, t_stack **stk, char name);
@@ -99,4 +100,7 @@ void			print_bench(t_data *data);
 void			putnbr(size_t n);
 void			putstr(char *str);
 void			select_bench(t_data *data);
+
+void			simple_algorithm(t_data *data);
+
 #endif

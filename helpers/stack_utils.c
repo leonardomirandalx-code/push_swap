@@ -26,3 +26,16 @@ void	free_words(char **words, int count)
 		free(words[--count]);
 	free(words);
 }
+
+int	is_sorted(t_stack *a)
+{
+	if (!a)
+		return (1);
+	while (a->next)
+        {
+		if (a->value > a->next->value)
+			return (0);
+		a = a->next;
+	}
+	return (1);
+}

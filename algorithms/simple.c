@@ -1,7 +1,6 @@
-#include <stdio.h>
 #include "push_swap.h"
 
-unsigned int	find_min(t_stack *a)
+static unsigned int	find_min(t_stack *a)
 {
 	int				min;
 	unsigned int	p_min;
@@ -23,11 +22,11 @@ unsigned int	find_min(t_stack *a)
 	return (p_min);
 }
 
-void	simple_sort(t_data *data)
+void	simple_algorithm(t_data *data)
 {
 	unsigned int	p_min;
 
-	while (stacksize(data->a) > 0)
+	while (stacksize(data->a) > 0 && !is_sorted(data->a))
 	{
 		p_min = find_min(data->a);
 		if (p_min <= stacksize(data->a) / 2)
@@ -50,53 +49,4 @@ void	simple_sort(t_data *data)
 	}
 	while (stacksize(data->b) > 0)
 		push(data, &data->b, &data->a, 'a');
-}
-
-int	main(void)
-{
-	t_stack *temp_a;
-	t_stack	*temp_b;
-	t_data	data;
-
-	data = (t_data){0};
-	add_bottom(&data.a, new_stack(-9));
-	add_bottom(&data.a, new_stack(-4));
-	add_bottom(&data.a, new_stack(7));
-	add_bottom(&data.a, new_stack(3));
-	add_bottom(&data.a, new_stack(4));
-	add_bottom(&data.a, new_stack(-8));
-	add_bottom(&data.a, new_stack(6));
-	data.b = NULL;
-	temp_a = data.a;
-	temp_b = data.b;
-	printf("Stack a: \n");
-	while (temp_a)
-	{
-		printf("%d\n", temp_a->value);
-		temp_a = temp_a->next;
-	}
-	printf("\nStack b: \n");
-	while (temp_b)
-        {
-                printf("%d\n", temp_b->value);
-                temp_b = temp_b->next;
-        }
-	printf("\nThe disorder level is %f\n\n", compute_disorder(data.a));
-	simple_sort(&data);
-	printf("\n");
-	temp_a = data.a;
-	printf("Stack a: \n");
-	while (temp_a)
-        {
-                printf("%d\n", temp_a->value);
-                temp_a = temp_a->next;
-        }
-	temp_b = data.b;
-	printf("\nStack b: \n");
-	while (temp_b)
-        {
-                printf("%d\n", temp_b->value);
-                temp_b = temp_b->next;
-        }
-	printf("\nThe disorder level is %f\n\n", compute_disorder(data.a));
 }
