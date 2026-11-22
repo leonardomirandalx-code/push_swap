@@ -61,7 +61,6 @@ typedef struct	s_data
 	size_t	ops[OP_COUNT];
 }	t_data;
 
-
 char			**ft_split(char const *s);
 void			free_words(char **words, int count);
 int				count_words(char const *s);
