@@ -9,6 +9,7 @@
 
 typedef struct s_stack
 {
+	size_t				index;
 	int				value;
 	struct s_stack	*next;
 }	t_stack;

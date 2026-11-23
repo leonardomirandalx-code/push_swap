@@ -45,6 +45,7 @@ t_stack	*new_stack(int value)
 		return (NULL);
 	new->value = value;
 	new->next = NULL;
+	new->index = 0;
 	return (new);
 }
 
