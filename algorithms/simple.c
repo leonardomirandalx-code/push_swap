@@ -30,15 +30,11 @@ void	simple_algorithm(t_data *data)
 	{
 		p_min = find_min(data->a);
 		if (p_min <= stacksize(data->a) / 2)
-		{
 			while (p_min-- > 0)
 				rotate(data, &data->a, 'a');
-		}
 		else
-		{
 			while (p_min++ < stacksize(data->a))
 				reverse_rotate(data, &data->a, 'a');
-		}
 		if (!is_sorted(data->a))
 			push(data, &data->a, &data->b, 'b');
 	}
