@@ -96,6 +96,7 @@ void			reverse_rotate(t_data *data, t_stack **stk, char name);
 void			rrr(t_data *data);
 void			push(t_data *data, t_stack **src, t_stack **dest, char name);
 
+void			normalize(t_data *data);
 void			select_algorithm(t_data *data);
 void			print_bench(t_data *data);
 void			putnbr(size_t n);
