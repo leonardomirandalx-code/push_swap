@@ -61,7 +61,7 @@ static void	restore_chunk(t_data *data)
 	while (data->b)
 	{
 		size = stacksize(data->b);
-		pos = find_max_pos(data->b);
+		pos = find_max(data->b);
 		rotate_max(data, pos, size);
 		push(data, &data->b, &data->a, 'a');
 	}
