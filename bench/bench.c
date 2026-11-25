@@ -7,7 +7,7 @@ static void put_disorder(float disorder)
 
     disorder *= 100;
     whole = (size_t)disorder;
-    	decimal = (size_t)((disorder - whole) * 100);
+    decimal = (size_t)((disorder - whole) * 100);
     putnbr(whole);
     write(2, ".", 1);
     if (decimal < 10)
