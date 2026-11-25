@@ -105,5 +105,6 @@ void			select_bench(t_data *data);
 
 void			simple_algorithm(t_data *data);
 void			medium_algorithm(t_data *data);
+void			complex_algorithm(t_data *data);
 
 #endif
