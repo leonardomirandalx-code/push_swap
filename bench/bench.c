@@ -5,17 +5,15 @@ static void put_disorder(float disorder)
     size_t whole;
     size_t decimal;
 
+    disorder *= 100;
     whole = (size_t)disorder;
-    decimal = (size_t)((disorder - whole) * 10000);
+    	decimal = (size_t)((disorder - whole) * 100);
     putnbr(whole);
     write(2, ".", 1);
-    if (decimal < 1000)
-        write(2, "0", 1);
-    if (decimal < 100)
-        write(2, "0", 1);
     if (decimal < 10)
-        write(2, "0", 1);
+	    write(2, "0", 1);
     putnbr(decimal);
+    write(2, "%", 1);
 }
 
 static char *get_algorithm(t_algorithm algorithm)

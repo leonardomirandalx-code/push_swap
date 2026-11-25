@@ -14,8 +14,11 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 	data.disorder = compute_disorder(data.a);
-	normalize(&data);
-	select_algorithm(&data);
+	if (!is_sorted(data.a))
+	{
+		normalize(&data);
+		select_algorithm(&data);
+	}
 	select_bench(&data);
 	free_all(&data.a, &data.b);
 	return (0);
