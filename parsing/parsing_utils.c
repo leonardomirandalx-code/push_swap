@@ -49,3 +49,16 @@ int	is_dup(t_stack *stack)
 	}
 	return (0);
 }
+
+int	is_sorted(t_stack *a)
+{
+	if (!a)
+		return (1);
+	while (a->next)
+        {
+		if (a->value > a->next->value)
+			return (0);
+		a = a->next;
+	}
+	return (1);
+}

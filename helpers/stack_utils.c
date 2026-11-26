@@ -1,41 +1,61 @@
 #include "push_swap.h"
 
-void	free_stack(t_stack **stack)
+unsigned int	stacksize(t_stack *stk)
+{
+	unsigned int	i;
+
+	if (!stk)
+		return (0);
+	i = 1;
+	while (stk->next)
+	{
+		i++;
+		stk = stk->next;
+	}
+	return (i);
+}
+
+t_stack	*find_bottom(t_stack *stk)
+{
+	if (!stk)
+		return (NULL);
+	while (stk->next)
+		stk = stk->next;
+	return (stk);
+}
+
+void	add_bottom(t_stack **stk, t_stack *new)
+{
+	if (!stk || !new)
+		return ;
+	if (*stk == NULL)
+	{
+		*stk = new;
+		return ;
+	}
+	find_bottom(*stk)->next = new;
+}
+
+t_stack	*new_stack(int value)
+{
+	t_stack	*new;
+
+	new = malloc(sizeof(t_stack));
+	if (new == NULL)
+		return (NULL);
+	new->value = value;
+	new->next = NULL;
+	new->index = 0;
+	return (new);
+}
+
+void	add_top(t_stack **stk, t_stack *new)
 {
 	t_stack	*temp;
 
-	if (!stack || !*stack)
+	if (!stk || !new)
 		return ;
-	while (*stack)
-	{
-		temp = (*stack)->next;
-		free(*stack);
-		*stack = temp;
-	}
-}
-
-void	free_all(t_stack **a, t_stack **b)
-{
-	free_stack(a);
-	free_stack(b);
-}
-
-void	free_words(char **words, int count)
-{
-	while (count > 0)
-		free(words[--count]);
-	free(words);
-}
-
-int	is_sorted(t_stack *a)
-{
-	if (!a)
-		return (1);
-	while (a->next)
-        {
-		if (a->value > a->next->value)
-			return (0);
-		a = a->next;
-	}
-	return (1);
+	temp = *stk;
+	*stk = new;
+	new->next = temp;
 }

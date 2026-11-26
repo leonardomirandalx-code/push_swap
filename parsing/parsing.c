@@ -5,7 +5,7 @@ static int	check_stack(char *token, t_stack **stack_a)
 	int		number;
 	t_stack	*new;
 
-	if (h_atoi(token, &number))
+	if (a_to_i(token, &number))
 		return (1);
 	new = new_stack(number);
 	if (!new)
@@ -56,23 +56,23 @@ int	validation(char **tokens, t_options *op, t_stack **stack_a)
 int	parse_args(int argc, char **argv, t_options *options,
 		t_stack **stack_a)
 {
-	char	**split;
+	char	**splits;
 	int		i;
 	int		count;
 
 	i = 1;
 	while (i < argc)
 	{
-		split = ft_split(argv[i]);
+		splits = split(argv[i]);
 		if (!split)
 			return (1);
 		count = count_words(argv[i]);
-		if (count == 0 || validation(split, options, stack_a))
+		if (count == 0 || validation(splits, options, stack_a))
 		{
-			free_words(split, count);
+			free_words(splits, count);
 			return (1);
 		}
-		free_words(split, count);
+		free_words(splits, count);
 		i++;
 	}
 	return (0);

@@ -63,11 +63,11 @@ typedef struct	s_data
 	size_t		ops[OP_COUNT];
 }	t_data;
 
-char			**ft_split(char const *s);
+char			**split(char const *s);
 void			free_words(char **words, int count);
 int				count_words(char const *s);
 
-int				h_atoi(const char *str, int *number);
+int				a_to_i(const char *str, int *number);
 char			*ft_substr(char const *s, unsigned int start, size_t len);
 size_t			ft_strlen(const char *s);
 int				ft_strcmp(char *s1, char *s2);

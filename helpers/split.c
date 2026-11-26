@@ -74,7 +74,7 @@ static int	fill_words(char **words, char const *s)
 	return (1);
 }
 
-char	**ft_split(char const *s)
+char	**split(char const *s)
 {
 	char	**words;
 

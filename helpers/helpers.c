@@ -1,26 +1,25 @@
 #include "push_swap.h"
 
-int	h_atoi(const char *str, int *number)
+int	a_to_i(const char *str, int *number)
 {
 	size_t		i;
+	size_t		result;
 	int			sign;
-	long long	result;
 
 	i = 0;
 	sign = 1;
 	result = 0;
 	if (str[i] == '-' || str[i] == '+')
-	{
-		if (str[i] == '-')
+		if (str[i++] == '-')
 			sign = -1;
-		i++;
-	}
 	while (str[i])
 	{
-		result = result * 10 + (str[i] - '0');
-		if ((sign == 1 && result > INT_MAX)
-			|| (sign == -1 && result > (long long)INT_MAX + 1))
+		if (result > INT_MAX / 10)
 			return (1);
+		if (result == INT_MAX / 10
+			&& str[i] - '0' > 7 + (sign == -1))
+			return (1);
+		result = result * 10 + (str[i] - '0');
 		i++;
 	}
 	*number = (int)(result * sign);
