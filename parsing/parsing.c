@@ -64,7 +64,7 @@ int	parse_args(int argc, char **argv, t_options *options,
 	while (i < argc)
 	{
 		splits = split(argv[i]);
-		if (!split)
+		if (!splits)
 			return (1);
 		count = count_words(argv[i]);
 		if (count == 0 || validation(splits, options, stack_a))
