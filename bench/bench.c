@@ -24,9 +24,7 @@ static char *get_algorithm(t_algorithm algorithm)
         return ("medium");
     if (algorithm == COMPLEX)
         return ("complex");
-    if (algorithm == ADAPTIVE)
-        return ("adaptive");
-    return ("none");
+    return ("adaptive");
 }
 
 static size_t get_total_ops(t_data *data)
