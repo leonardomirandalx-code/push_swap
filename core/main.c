@@ -19,6 +19,10 @@ int	main(int argc, char **argv)
 		normalize(&data);
 		select_algorithm(&data);
 	}
+	else if (data.options.flag == NONE || data.options.flag == ADAPTIVE)
+		data.algorithm = SIMPLE;
+	else
+		data.algorithm = data.options.flag;
 	select_bench(&data);
 	free_all(&data.a, &data.b);
 	return (0);
