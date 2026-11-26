@@ -3,7 +3,7 @@
 int	a_to_i(const char *str, int *number)
 {
 	size_t		i;
-	size_t		result;
+	ssize_t		result;
 	int			sign;
 
 	i = 0;
