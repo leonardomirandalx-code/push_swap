@@ -59,7 +59,7 @@ void print_bench(t_data *data)
     put_disorder(data->disorder);
     write(2, "\n", 1);
     putstr("[bench] strategy: ");
-    putstr(get_algorithm(data->options.flag));
+    putstr(get_algorithm(data->algorithm));
     write(2, "\n", 1);
     putstr("[bench] total_ops: ");
     putnbr(get_total_ops(data));

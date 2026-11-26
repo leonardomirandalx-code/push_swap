@@ -55,11 +55,12 @@ typedef enum e_actions
 
 typedef struct	s_data
 {
-	t_stack	*a;
-	t_stack	*b;
+	t_stack		*a;
+	t_stack		*b;
+	int 		algorithm;
 	t_options	options;
-	float	disorder;
-	size_t	ops[OP_COUNT];
+	float		disorder;
+	size_t		ops[OP_COUNT];
 }	t_data;
 
 char			**ft_split(char const *s);

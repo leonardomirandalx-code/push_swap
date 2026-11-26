@@ -2,20 +2,23 @@
 
 void	select_algorithm(t_data *data)
 {
-	if (data->options.flag == ADAPTIVE || data->options.flag == NONE)
+	if (data->options.flag == ADAPTIVE
+		|| data->options.flag == NONE)
 	{
 		if (data->disorder < 0.2)
-			simple_algorithm(data);
+			data->algorithm = SIMPLE;
 		else if (data->disorder < 0.5)
-			medium_algorithm(data);
+			data->algorithm = MEDIUM;
 		else
-			complex_algorithm(data);
+			data->algorithm = COMPLEX;
 	}
-	else if (data->options.flag == SIMPLE)
+	else
+		data->algorithm = data->options.flag;
+	if (data->algorithm == SIMPLE)
 		simple_algorithm(data);
-	else if (data->options.flag == MEDIUM)
+	else if (data->algorithm == MEDIUM)
 		medium_algorithm(data);
-	else if (data->options.flag == COMPLEX)
+	else if (data->algorithm == COMPLEX)
 		complex_algorithm(data);
 }
 
