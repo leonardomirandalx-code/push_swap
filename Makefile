@@ -6,9 +6,9 @@ RM = rm -f
 
 SRC = parsing/parsing.c \
       parsing/parsing_utils.c \
-      helpers/h_split.c \
+      helpers/split.c \
       helpers/helpers.c \
-      helpers/stack_helpers.c \
+      helpers/cleanup.c \
       helpers/stack_utils.c \
       actions/actions.c \
       actions/double_actions.c \
@@ -20,8 +20,6 @@ SRC = parsing/parsing.c \
       algorithms/simple.c \
       algorithms/medium.c \
       algorithms/complex.c
-
-
 
 OBJ = $(SRC:.c=.o)
 
