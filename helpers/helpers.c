@@ -6,7 +6,7 @@
 /*   By: tisilva <tisilva@student.42lisboa.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/27 08:17:46 by tisilva           #+#    #+#             */
-/*   Updated: 2026/11/27 08:36:36 by tisilva          ###   ########.fr       */
+/*   Updated: 2026/11/27 08:52:55 by tisilva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 int	a_to_i(const char *str, int *number)
 {
-	size_t		i;
-	ssize_t		result;
-	int			sign;
+	size_t	i;
+	ssize_t	result;
+	int		sign;
 
 	i = 0;
 	sign = 1;
@@ -58,18 +58,18 @@ int	ft_strcmp(char *s1, char *s2)
 	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
 
-void putstr(char *str)
+void	putstr(char *str)
 {
-    while (*str)
-    {
-        write(2, str, 1);
-        str++;
-    }
+	while (*str)
+	{
+		write(2, str, 1);
+		str++;
+	}
 }
 
-void putnbr(size_t n)
+void	putnbr(size_t n)
 {
-    if (n >= 10)
-        putnbr(n / 10);
-    write(2, &DEC[n % 10], 1);
+	if (n >= 10)
+		putnbr(n / 10);
+	write(2, &DEC[n % 10], 1);
 }

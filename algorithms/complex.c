@@ -6,7 +6,7 @@
 /*   By: tisilva <tisilva@student.42lisboa.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/27 08:17:46 by tisilva           #+#    #+#             */
-/*   Updated: 2026/11/27 08:35:39 by tisilva          ###   ########.fr       */
+/*   Updated: 2026/11/27 08:43:52 by tisilva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static int	get_bit(size_t index, int position)
 {
 	return ((index >> position) & 1);
 }
-	
+
 void	complex_algorithm(t_data *data)
 {
 	int	size;

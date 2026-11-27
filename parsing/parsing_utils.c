@@ -6,7 +6,7 @@
 /*   By: tisilva <tisilva@student.42lisboa.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/27 08:17:46 by tisilva           #+#    #+#             */
-/*   Updated: 2026/11/27 08:37:09 by tisilva          ###   ########.fr       */
+/*   Updated: 2026/11/27 08:52:01 by tisilva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ int	is_number(char *str)
 	}
 	return (NUMBER);
 }
+
 int	is_flag(char *str)
 {
 	if (!ft_strcmp(str, "--simple"))
@@ -67,7 +68,7 @@ int	is_sorted(t_stack *a)
 	if (!a)
 		return (1);
 	while (a->next)
-        {
+	{
 		if (a->value > a->next->value)
 			return (0);
 		a = a->next;

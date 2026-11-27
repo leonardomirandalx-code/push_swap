@@ -6,7 +6,7 @@
 /*   By: tisilva <tisilva@student.42lisboa.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/27 08:17:46 by tisilva           #+#    #+#             */
-/*   Updated: 2026/11/27 08:34:23 by tisilva          ###   ########.fr       */
+/*   Updated: 2026/11/27 08:44:24 by tisilva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 
 typedef struct s_stack
 {
-	size_t				index;
+	size_t			index;
 	int				value;
 	struct s_stack	*next;
 }	t_stack;
@@ -64,11 +64,11 @@ typedef enum e_actions
 	OP_COUNT
 }	t_actions;
 
-typedef struct	s_data
+typedef struct s_data
 {
 	t_stack		*a;
 	t_stack		*b;
-	int 		algorithm;
+	int			algorithm;
 	t_options	options;
 	float		disorder;
 	size_t		ops[OP_COUNT];
@@ -87,8 +87,9 @@ int				is_number(char *str);
 int				is_flag(char *str);
 int				is_dup(t_stack *stack);
 int				parse_args(int argc, char **argv, t_options *options,
-								 t_stack **stack_a);
-int				validation(char **tokens, t_options *op, t_stack **stack_a);
+					t_stack **stack_a);
+int				validation(char **tokens, t_options *op,
+					t_stack **stack_a);
 
 unsigned int	stacksize(t_stack *stk);
 t_stack			*find_bottom(t_stack *stk);

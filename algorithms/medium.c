@@ -6,7 +6,7 @@
 /*   By: tisilva <tisilva@student.42lisboa.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/27 08:17:46 by tisilva           #+#    #+#             */
-/*   Updated: 2026/11/27 08:35:47 by tisilva          ###   ########.fr       */
+/*   Updated: 2026/11/27 08:50:32 by tisilva          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,17 +52,21 @@ static void	push_chunk(t_data *data, size_t low, size_t high)
 static void	rotate_max(t_data *data, unsigned int pos, unsigned int size)
 {
 	if (pos <= size / 2)
+	{
 		while (pos > 0)
 		{
 			rotate(data, &data->b, 'b');
 			pos--;
 		}
+	}
 	else
+	{
 		while (pos < size)
 		{
 			reverse_rotate(data, &data->b, 'b');
 			pos++;
 		}
+	}
 }
 
 static void	restore_chunk(t_data *data)

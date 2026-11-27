@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 make all || exit 1
@@ -16,6 +17,7 @@ TOTAL=0
 ERRORS=0
 ALL_TOTAL=0
 ALL_ERRORS=0
+FD_ERROR=""
 
 FAILED_TESTS="/tmp/ps_failed"
 VG_LOG_DIR="/tmp/ps_vg_logs"
@@ -26,6 +28,8 @@ VG_RUNS=0
 VG_ERROR_COUNT=0
 VG_AVAILABLE=0
 CHECKER_AVAILABLE=0
+BONUS_CHECKER_AVAILABLE=0
+BONUS_CHECKER_VALID=0
 NORM_AVAILABLE=0
 
 if command -v valgrind >/dev/null 2>&1; then
@@ -35,6 +39,10 @@ fi
 
 if [ -x ./checker_linux ]; then
 	CHECKER_AVAILABLE=1
+fi
+
+if [ -x ./checker ]; then
+	BONUS_CHECKER_AVAILABLE=1
 fi
 
 if command -v norminette >/dev/null 2>&1; then
@@ -87,13 +95,46 @@ run_push_swap()
 	local status
 	local vg_status
 	local vg_log
+	local bench=0
 
 	shift
+
+	FD_ERROR=""
+	if [[ " $* " =~ (^|[[:space:]])--bench([[:space:]]|$) ]]; then
+		bench=1
+	fi
 
 	if ./push_swap "$@" >/tmp/ps_out 2>/tmp/ps_err; then
 		status=0
 	else
 		status=$?
+	fi
+
+	if [ "$status" -eq 0 ]; then
+		if [ "$bench" -eq 0 ] && [ -s /tmp/ps_err ]; then
+			FD_ERROR="unexpected stderr"
+			return 125
+		fi
+		if [ "$bench" -eq 1 ] && [ ! -s /tmp/ps_err ]; then
+			FD_ERROR="missing benchmark stderr"
+			return 125
+		fi
+		while IFS= read -r operation
+		do
+			case "$operation" in
+				sa|sb|ss|pa|pb|ra|rb|rr|rra|rrb|rrr)
+					;;
+				*)
+					FD_ERROR="invalid stdout"
+					return 125
+					;;
+			esac
+		done < /tmp/ps_out
+	else
+		if [ -s /tmp/ps_out ] || [ "$(cat /tmp/ps_err)" != "Error" ]; then
+			FD_ERROR="invalid error channels"
+			return 125
+		fi
 	fi
 
 	if [ "$VG_AVAILABLE" -eq 1 ]; then
@@ -120,6 +161,46 @@ run_push_swap()
 	return "$status"
 }
 
+compare_checker_case()
+{
+	local label="$1"
+	local instructions="$2"
+	local original_status
+	local bonus_status
+
+	shift 2
+
+	printf '%b' "$instructions" > /tmp/ps_checker_in
+
+	./checker_linux "$@" < /tmp/ps_checker_in \
+		> /tmp/ps_ref_out 2> /tmp/ps_ref_err
+	original_status=$?
+
+	./checker "$@" < /tmp/ps_checker_in \
+		> /tmp/ps_bonus_out 2> /tmp/ps_bonus_err
+	bonus_status=$?
+
+	if [ "$original_status" -ne "$bonus_status" ] \
+		|| ! cmp -s /tmp/ps_ref_out /tmp/ps_bonus_out \
+		|| ! cmp -s /tmp/ps_ref_err /tmp/ps_bonus_err; then
+		printf "  [FAILED] Bonus checker: %s\n" "$label"
+		return 1
+	fi
+
+	return 0
+}
+
+validate_bonus_checker()
+{
+	compare_checker_case "Already sorted" "" 1 2 3 || return 1
+	compare_checker_case "Unsorted" "" 2 1 || return 1
+	compare_checker_case "sa" "sa\n" 2 1 || return 1
+	compare_checker_case "pb / pa" "pb\npa\n" 1 2 || return 1
+	compare_checker_case "ra" "ra\n" 3 1 2 || return 1
+
+	return 0
+}
+
 check_operations()
 {
 	local label="$1"
@@ -144,11 +225,18 @@ check_operations()
 valid()
 {
 	local label="PARSING / $CURRENT_GROUP: $*"
+	local status
 
 	run_push_swap "$label" "$@"
-	if [ $? -ne 0 ]; then
+	status=$?
+
+	if [ "$status" -ne 0 ]; then
 		ERRORS=$((ERRORS + 1))
-		printf "  [EXPECTED: VALID] %s\n" "$*" >> "$FAILED_TESTS"
+		if [ "$status" -eq 125 ]; then
+			printf "[FD FAILED] %s: %s\n" "$label" "$FD_ERROR" >> "$FAILED_TESTS"
+		else
+			printf "[EXPECTED: VALID] %s\n" "$*" >> "$FAILED_TESTS"
+		fi
 	fi
 	TOTAL=$((TOTAL + 1))
 }
@@ -156,11 +244,19 @@ valid()
 invalid()
 {
 	local label="PARSING / $CURRENT_GROUP: $*"
+	local status
 
 	run_push_swap "$label" "$@"
-	if [ $? -eq 0 ] || ! grep -qx "Error" /tmp/ps_err; then
+	status=$?
+
+	if [ "$status" -eq 0 ] || [ "$status" -eq 125 ] \
+		|| [ "$(cat /tmp/ps_err)" != "Error" ]; then
 		ERRORS=$((ERRORS + 1))
-		printf "  [EXPECTED: INVALID] %s\n" "$*" >> "$FAILED_TESTS"
+		if [ "$status" -eq 125 ]; then
+			printf "[FD FAILED] %s: %s\n" "$label" "$FD_ERROR" >> "$FAILED_TESTS"
+		else
+			printf "[EXPECTED: INVALID] %s\n" "$*" >> "$FAILED_TESTS"
+		fi
 	fi
 	TOTAL=$((TOTAL + 1))
 }
@@ -169,13 +265,16 @@ run_functional()
 {
 	local label="$1"
 	local checker_status
+	local push_status
 
 	shift
 
 	printf "\n  %s\n" "$label"
 
 	run_push_swap "FUNCTIONAL / $label" "$@"
-	if [ $? -ne 0 ]; then
+	push_status=$?
+
+	if [ "$push_status" -ne 0 ]; then
 		printf "  ${RED}PUSH_SWAP FAILED${RESET}\n"
 		record_failure "FUNCTIONAL / $label: push_swap failed"
 		return
@@ -356,6 +455,25 @@ run_norminette()
 }
 
 CURRENT_GROUP=""
+
+section "0. CHECKER COMPARISON"
+
+if [ "$CHECKER_AVAILABLE" -eq 0 ]; then
+	printf "  ${YELLOW}Checker: SKIP — checker_linux not found${RESET}\n"
+	printf "  ${YELLOW}Bonus checker: SKIP — reference unavailable${RESET}\n"
+elif [ "$BONUS_CHECKER_AVAILABLE" -eq 0 ]; then
+	printf "  ${YELLOW}Bonus checker: SKIP — ./checker not found${RESET}\n"
+else
+	printf "  Comparing bonus checker with reference...\n"
+
+	if validate_bonus_checker; then
+		BONUS_CHECKER_VALID=1
+		printf "  ${GREEN}Bonus checker: VALIDATED${RESET}\n"
+	else
+		printf "  ${RED}Bonus checker: FAILED${RESET}\n"
+		record_failure "BONUS CHECKER: behavior differs from reference"
+	fi
+fi
 
 section "1. FUNCTIONAL TESTS"
 
@@ -866,6 +984,16 @@ else
 	printf "  Checker: ${GREEN}AVAILABLE${RESET}\n"
 fi
 
+if [ "$CHECKER_AVAILABLE" -eq 0 ]; then
+	printf "  Bonus checker: ${YELLOW}SKIP — reference unavailable${RESET}\n"
+elif [ "$BONUS_CHECKER_AVAILABLE" -eq 0 ]; then
+	printf "  Bonus checker: ${YELLOW}SKIP — ./checker not found${RESET}\n"
+elif [ "$BONUS_CHECKER_VALID" -eq 1 ]; then
+	printf "  Bonus checker: ${GREEN}VALIDATED${RESET}\n"
+else
+	printf "  Bonus checker: ${RED}FAILED${RESET}\n"
+fi
+
 if [ "$VG_AVAILABLE" -eq 0 ]; then
 	printf "  Valgrind: ${YELLOW}SKIP${RESET}\n"
 elif [ "$VG_ERROR_COUNT" -eq 0 ]; then
@@ -888,5 +1016,10 @@ fi
 rm -f /tmp/ps_out /tmp/ps_err /tmp/ps_check
 rm -f /tmp/ps_result_* /tmp/ps_cases_*
 rm -f /tmp/ps_sources "$NORM_LOG"
+rm -f /tmp/ps_checker_in
+rm -f /tmp/ps_ref_out /tmp/ps_ref_err
+rm -f /tmp/ps_bonus_out /tmp/ps_bonus_err
 rm -f "$FAILED_TESTS" "$VG_ERRORS"
 rm -rf "$VG_LOG_DIR"
+
+
