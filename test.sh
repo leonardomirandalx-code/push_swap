@@ -1,6 +1,11 @@
 #!/bin/bash
 
+set -o pipefail
+
 make all || exit 1
+
+TMP_DIR=$(mktemp -d "${TMPDIR:-/tmp}/push_swap_tests.XXXXXX") || exit 1
+trap 'rm -rf "$TMP_DIR"' EXIT
 
 RANDOM_RUNS=20
 SIZES=(10 100 500)
@@ -18,10 +23,10 @@ ALL_TOTAL=0
 ALL_ERRORS=0
 FD_ERROR=""
 
-FAILED_TESTS="/tmp/ps_failed"
-VG_LOG_DIR="/tmp/ps_vg_logs"
-VG_ERRORS="/tmp/ps_vg_errors"
-NORM_LOG="/tmp/ps_norminette"
+FAILED_TESTS="$TMP_DIR/ps_failed"
+VG_LOG_DIR="$TMP_DIR/ps_vg_logs"
+VG_ERRORS="$TMP_DIR/ps_vg_errors"
+NORM_LOG="$TMP_DIR/ps_norminette"
 
 VG_RUNS=0
 VG_ERROR_COUNT=0
@@ -34,7 +39,7 @@ NORM_STATUS="SKIP"
 
 if command -v valgrind >/dev/null 2>&1; then
 	VG_AVAILABLE=1
-	mkdir -p "$VG_LOG_DIR"
+	mkdir -p "$VG_LOG_DIR" || exit 1
 fi
 
 if [ -x ./checker_linux ]; then
@@ -91,7 +96,23 @@ end_group()
 
 is_error_output()
 {
-	printf 'Error\n' | cmp -s - /tmp/ps_err
+	printf 'Error\n' | cmp -s - "$TMP_DIR/ps_err"
+}
+
+validate_bench_output()
+{
+	local operation
+	local count
+
+	count=$(wc -l < "$TMP_DIR/ps_err") || return 1
+	[ "$count" -eq 14 ] || return 1
+	grep -Eq '^\[bench\] disorder: [0-9]+\.[0-9]{2}%$' "$TMP_DIR/ps_err" || return 1
+	grep -Eq '^\[bench\] strategy: (simple|medium|complex|adaptive)$' "$TMP_DIR/ps_err" || return 1
+	grep -Eq '^\[bench\] total_ops: [0-9]+$' "$TMP_DIR/ps_err" || return 1
+	for operation in sa sb ss pa pb ra rb rr rra rrb rrr
+	do
+		grep -Eq "^\[bench\] $operation: [0-9]+$" "$TMP_DIR/ps_err" || return 1
+	done
 }
 
 run_push_swap()
@@ -101,6 +122,7 @@ run_push_swap()
 	local vg_status
 	local vg_log
 	local bench=0
+	local operation
 
 	shift
 
@@ -109,18 +131,18 @@ run_push_swap()
 		bench=1
 	fi
 
-	if ./push_swap "$@" >/tmp/ps_out 2>/tmp/ps_err; then
+	if ./push_swap "$@" >"$TMP_DIR/ps_out" 2>"$TMP_DIR/ps_err"; then
 		status=0
 	else
 		status=$?
 	fi
 
 	if [ "$status" -eq 0 ]; then
-		if [ "$bench" -eq 0 ] && [ -s /tmp/ps_err ]; then
+		if [ "$bench" -eq 0 ] && [ -s "$TMP_DIR/ps_err" ]; then
 			FD_ERROR="unexpected stderr"
 			return 125
 		fi
-		if [ "$bench" -eq 1 ] && [ ! -s /tmp/ps_err ]; then
+		if [ "$bench" -eq 1 ] && [ ! -s "$TMP_DIR/ps_err" ]; then
 			FD_ERROR="missing benchmark stderr"
 			return 125
 		fi
@@ -134,10 +156,20 @@ run_push_swap()
 					return 125
 					;;
 			esac
-		done < /tmp/ps_out
-	else
-		if [ -s /tmp/ps_out ] || ! is_error_output; then
+		done < "$TMP_DIR/ps_out"
+	elif [ "$status" -eq 1 ]; then
+		if [ -s "$TMP_DIR/ps_out" ] || ! is_error_output; then
 			FD_ERROR="invalid error channels"
+			return 125
+		fi
+	else
+		FD_ERROR="unexpected exit status: $status"
+		return 125
+	fi
+
+	if [ "$bench" -eq 1 ] && [ "$status" -eq 0 ]; then
+		if ! validate_bench_output; then
+			FD_ERROR="invalid benchmark metrics"
 			return 125
 		fi
 	fi
@@ -146,9 +178,9 @@ run_push_swap()
 		VG_RUNS=$((VG_RUNS + 1))
 		vg_log="$VG_LOG_DIR/run_$VG_RUNS.log"
 
-		if valgrind --quiet --leak-check=full \
+		if valgrind --leak-check=full \
 			--show-leak-kinds=all \
-			--errors-for-leak-kinds=definite,indirect,possible \
+			--errors-for-leak-kinds=all \
 			--error-exitcode=99 \
 			--log-file="$vg_log" \
 			./push_swap "$@" >/dev/null 2>/dev/null; then
@@ -157,9 +189,16 @@ run_push_swap()
 			vg_status=$?
 		fi
 
-		if [ "$vg_status" -eq 99 ]; then
+		if [ ! -s "$vg_log" ] || ! grep -q "ERROR SUMMARY:" "$vg_log"; then
+			VG_ERROR_COUNT=$((VG_ERROR_COUNT + 1))
+			printf "%s|%s\n" "$label: incomplete Valgrind log" "$vg_log" >> "$VG_ERRORS"
+		elif [ "$vg_status" -eq 99 ] || \
+			grep -Eq "ERROR SUMMARY: [1-9][0-9]* errors" "$vg_log"; then
 			VG_ERROR_COUNT=$((VG_ERROR_COUNT + 1))
 			printf "%s|%s\n" "$label" "$vg_log" >> "$VG_ERRORS"
+		elif [ "$vg_status" -ge 128 ]; then
+			VG_ERROR_COUNT=$((VG_ERROR_COUNT + 1))
+			printf "%s|%s\n" "$label: interrupted Valgrind execution" "$vg_log" >> "$VG_ERRORS"
 		fi
 	fi
 
@@ -176,19 +215,19 @@ compare_checker_case()
 	shift 2
 
 	ALL_TOTAL=$((ALL_TOTAL + 1))
-	printf '%b' "$instructions" > /tmp/ps_checker_in
+	printf '%b' "$instructions" > "$TMP_DIR/ps_checker_in"
 
-	./checker_linux "$@" < /tmp/ps_checker_in \
-		> /tmp/ps_ref_out 2> /tmp/ps_ref_err
+	./checker_linux "$@" < "$TMP_DIR/ps_checker_in" \
+		> "$TMP_DIR/ps_ref_out" 2> "$TMP_DIR/ps_ref_err"
 	original_status=$?
 
-	./checker "$@" < /tmp/ps_checker_in \
-		> /tmp/ps_bonus_out 2> /tmp/ps_bonus_err
+	./checker "$@" < "$TMP_DIR/ps_checker_in" \
+		> "$TMP_DIR/ps_bonus_out" 2> "$TMP_DIR/ps_bonus_err"
 	bonus_status=$?
 
 	if [ "$original_status" -ne "$bonus_status" ] \
-		|| ! cmp -s /tmp/ps_ref_out /tmp/ps_bonus_out \
-		|| ! cmp -s /tmp/ps_ref_err /tmp/ps_bonus_err; then
+		|| ! cmp -s "$TMP_DIR/ps_ref_out" "$TMP_DIR/ps_bonus_out" \
+		|| ! cmp -s "$TMP_DIR/ps_ref_err" "$TMP_DIR/ps_bonus_err"; then
 		printf "  [FAILED] Bonus checker: %s\n" "$label"
 		record_failure "BONUS CHECKER / $label: behavior differs from reference"
 		return 1
@@ -222,7 +261,7 @@ check_operations()
 		return 2
 	fi
 
-	if output=$(./checker_linux "$@" < /tmp/ps_out 2>&1); then
+	if output=$(./checker_linux "$@" < "$TMP_DIR/ps_out" 2>&1); then
 		checker_status=0
 	else
 		checker_status=$?
@@ -319,7 +358,7 @@ run_functional()
 
 	if [ "$checker_status" -eq 0 ]; then
 		printf "  ${GREEN}OK${RESET} — %s operations\n" \
-			"$(wc -l < /tmp/ps_out)"
+			"$(wc -l < "$TMP_DIR/ps_out")"
 	else
 		record_failure "FUNCTIONAL / $label: checker failed"
 	fi
@@ -333,12 +372,14 @@ generate_cases()
 
 	for size in "${SIZES[@]}"
 	do
-		file="/tmp/ps_cases_$size"
-		: > "$file"
+		file="$TMP_DIR/ps_cases_$size"
+		: > "$file" || return 1
 
 		for ((sample = 1; sample <= RANDOM_RUNS; sample++))
 		do
-			shuf -i "1-$size" -n "$size" | paste -sd ' ' - >> "$file"
+			shuf -i 0-200000 -n "$size" |
+				awk '{ print $1 - 100000 }' |
+				paste -sd ' ' - >> "$file" || return 1
 		done
 	done
 }
@@ -357,7 +398,7 @@ run_bench()
 	local average
 	local grade
 	local failed=0
-	local result="/tmp/ps_result_${name}_${size}"
+	local result="$TMP_DIR/ps_result_${name}_${size}"
 	local -a args
 
 	while IFS= read -r numbers
@@ -374,7 +415,7 @@ run_bench()
 				printf "  ${RED}[FAILED SEQUENCE]${RESET} %s\n" "$numbers"
 				record_failure "BENCHMARK / $mode / $size / sample $sample: checker failed | $numbers"
 			else
-				operations=$(wc -l < /tmp/ps_out)
+				operations=$(wc -l < "$TMP_DIR/ps_out")
 				operations=${operations//[[:space:]]/}
 				total=$((total + operations))
 				successful=$((successful + 1))
@@ -390,7 +431,7 @@ run_bench()
 		fi
 
 		ALL_TOTAL=$((ALL_TOTAL + 1))
-	done < "/tmp/ps_cases_$size"
+	done < "$TMP_DIR/ps_cases_$size"
 
 	if [ "$successful" -gt 0 ]; then
 		average=$((total / successful))
@@ -472,14 +513,14 @@ run_norminette()
 	fi
 
 	find . -type f \( -name "*.c" -o -name "*.h" \) \
-		-not -path "./.git/*" -print0 > /tmp/ps_sources
+		-not -path "./.git/*" -print0 > "$TMP_DIR/ps_sources"
 
-	if [ ! -s /tmp/ps_sources ]; then
+	if [ ! -s "$TMP_DIR/ps_sources" ]; then
 		printf "${YELLOW}SKIP${RESET} — No C files found\n"
 		return
 	fi
 
-	xargs -0 norminette < /tmp/ps_sources > "$NORM_LOG" 2>&1
+	xargs -0 norminette < "$TMP_DIR/ps_sources" > "$NORM_LOG" 2>&1
 	status=$?
 
 	ALL_TOTAL=$((ALL_TOTAL + 1))
@@ -517,6 +558,15 @@ fi
 
 section "1. FUNCTIONAL TESTS"
 
+run_functional "LOW DISORDER — DEFAULT" \
+	1 2 3 4 5 6 7 9 8
+
+run_functional "MEDIUM DISORDER — DEFAULT" \
+	5 4 3 2 1 6 7 8 9 10
+
+run_functional "HIGH DISORDER — DEFAULT" \
+	10 9 8 7 6 5 4 3 2 1
+
 run_functional "LOW DISORDER — SIMPLE" \
 	--bench --adaptive 1 2 3 4 5 6 7 9 8
 
@@ -529,7 +579,10 @@ run_functional "HIGH DISORDER — COMPLEX" \
 section "2. RANDOM PERFORMANCE BENCHMARK"
 
 subsection "Generating random test cases"
-generate_cases
+if ! generate_cases; then
+	printf "  ${RED}Failed to generate random samples${RESET}\n"
+	exit 1
+fi
 
 printf "  Samples per size: %d\n" "$RANDOM_RUNS"
 printf "  Sizes: 10, 100, 500\n"
@@ -552,11 +605,11 @@ printf "  ─────────────┼─────────�
 for mode in "${MODES[@]}"
 do
 	printf "  %-12s | %-10s | " "${mode^^}" "AVG / WORST"
-	show_result "/tmp/ps_result_${mode}_10"
+	show_result "$TMP_DIR/ps_result_${mode}_10"
 	printf " | "
-	show_result "/tmp/ps_result_${mode}_100"
+	show_result "$TMP_DIR/ps_result_${mode}_100"
 	printf " | "
-	show_result "/tmp/ps_result_${mode}_500"
+	show_result "$TMP_DIR/ps_result_${mode}_500"
 	printf "\n"
 done
 
@@ -1059,12 +1112,3 @@ if [ -s "$FAILED_TESTS" ]; then
 else
 	printf "\n${GREEN}ALL TESTS PASSED${RESET}\n"
 fi
-
-rm -f /tmp/ps_out /tmp/ps_err /tmp/ps_check
-rm -f /tmp/ps_result_* /tmp/ps_cases_*
-rm -f /tmp/ps_sources "$NORM_LOG"
-rm -f /tmp/ps_checker_in
-rm -f /tmp/ps_ref_out /tmp/ps_ref_err
-rm -f /tmp/ps_bonus_out /tmp/ps_bonus_err
-rm -f "$FAILED_TESTS" "$VG_ERRORS"
-rm -rf "$VG_LOG_DIR"
