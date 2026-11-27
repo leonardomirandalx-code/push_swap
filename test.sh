@@ -89,6 +89,11 @@ end_group()
 	fi
 }
 
+is_error_output()
+{
+	printf 'Error\n' | cmp -s - /tmp/ps_err
+}
+
 run_push_swap()
 {
 	local label="$1"
@@ -119,7 +124,7 @@ run_push_swap()
 			FD_ERROR="missing benchmark stderr"
 			return 125
 		fi
-		while IFS= read -r operation
+		while IFS= read -r operation || [ -n "$operation" ]
 		do
 			case "$operation" in
 				sa|sb|ss|pa|pb|ra|rb|rr|rra|rrb|rrr)
@@ -131,7 +136,7 @@ run_push_swap()
 			esac
 		done < /tmp/ps_out
 	else
-		if [ -s /tmp/ps_out ] || [ "$(cat /tmp/ps_err)" != "Error" ]; then
+		if [ -s /tmp/ps_out ] || ! is_error_output; then
 			FD_ERROR="invalid error channels"
 			return 125
 		fi
@@ -170,6 +175,7 @@ compare_checker_case()
 
 	shift 2
 
+	ALL_TOTAL=$((ALL_TOTAL + 1))
 	printf '%b' "$instructions" > /tmp/ps_checker_in
 
 	./checker_linux "$@" < /tmp/ps_checker_in \
@@ -184,6 +190,7 @@ compare_checker_case()
 		|| ! cmp -s /tmp/ps_ref_out /tmp/ps_bonus_out \
 		|| ! cmp -s /tmp/ps_ref_err /tmp/ps_bonus_err; then
 		printf "  [FAILED] Bonus checker: %s\n" "$label"
+		record_failure "BONUS CHECKER / $label: behavior differs from reference"
 		return 1
 	fi
 
@@ -192,19 +199,22 @@ compare_checker_case()
 
 validate_bonus_checker()
 {
-	compare_checker_case "Already sorted" "" 1 2 3 || return 1
-	compare_checker_case "Unsorted" "" 2 1 || return 1
-	compare_checker_case "sa" "sa\n" 2 1 || return 1
-	compare_checker_case "pb / pa" "pb\npa\n" 1 2 || return 1
-	compare_checker_case "ra" "ra\n" 3 1 2 || return 1
+	local failed=0
 
-	return 0
+	compare_checker_case "Already sorted" "" 1 2 3 || failed=1
+	compare_checker_case "Unsorted" "" 2 1 || failed=1
+	compare_checker_case "sa" "sa\n" 2 1 || failed=1
+	compare_checker_case "pb / pa" "pb\npa\n" 1 2 || failed=1
+	compare_checker_case "ra" "ra\n" 3 1 2 || failed=1
+
+	return "$failed"
 }
 
 check_operations()
 {
 	local label="$1"
 	local output
+	local checker_status
 
 	shift
 
@@ -212,9 +222,13 @@ check_operations()
 		return 2
 	fi
 
-	output=$(./checker_linux "$@" < /tmp/ps_out 2>&1)
+	if output=$(./checker_linux "$@" < /tmp/ps_out 2>&1); then
+		checker_status=0
+	else
+		checker_status=$?
+	fi
 
-	if [ "$output" != "OK" ]; then
+	if [ "$checker_status" -ne 0 ] || [ "$output" != "OK" ]; then
 		printf "  [CHECKER FAILED] %s: %s\n" "$label" "$output"
 		return 1
 	fi
@@ -250,7 +264,7 @@ invalid()
 	status=$?
 
 	if [ "$status" -eq 0 ] || [ "$status" -eq 125 ] \
-		|| [ "$(cat /tmp/ps_err)" != "Error" ]; then
+		|| ! is_error_output; then
 		ERRORS=$((ERRORS + 1))
 		if [ "$status" -eq 125 ]; then
 			printf "[FD FAILED] %s: %s\n" "$label" "$FD_ERROR" >> "$FAILED_TESTS"
@@ -266,8 +280,23 @@ run_functional()
 	local label="$1"
 	local checker_status
 	local push_status
+	local arg
+	local -a checker_args
 
 	shift
+	checker_args=()
+	ALL_TOTAL=$((ALL_TOTAL + 1))
+
+	for arg in "$@"
+	do
+		case "$arg" in
+			--bench|--simple|--medium|--complex|--adaptive)
+				;;
+			*)
+				checker_args+=("$arg")
+				;;
+		esac
+	done
 
 	printf "\n  %s\n" "$label"
 
@@ -285,7 +314,7 @@ run_functional()
 		return
 	fi
 
-	check_operations "$label" "$@"
+	check_operations "$label" "${checker_args[@]}"
 	checker_status=$?
 
 	if [ "$checker_status" -eq 0 ]; then
@@ -369,7 +398,9 @@ run_bench()
 		average=0
 	fi
 
-	if [ "$size" -eq 10 ]; then
+	if [ "$CHECKER_AVAILABLE" -eq 0 ]; then
+		grade="UNVERIFIED"
+	elif [ "$size" -eq 10 ]; then
 		if [ "$average" -le 10 ]; then
 			grade="EXCELLENT"
 		elif [ "$average" -le 20 ]; then
@@ -419,6 +450,9 @@ show_result()
 			;;
 		PASS)
 			printf "${BLUE}%-10s${RESET}" "$grade"
+			;;
+		UNVERIFIED)
+			printf "${YELLOW}%-10s${RESET}" "$grade"
 			;;
 		FAIL)
 			printf "${RED}%-10s${RESET}" "$grade"
@@ -478,7 +512,6 @@ else
 		printf "  ${GREEN}Bonus checker: VALIDATED${RESET}\n"
 	else
 		printf "  ${RED}Bonus checker: FAILED${RESET}\n"
-		record_failure "BONUS CHECKER: behavior differs from reference"
 	fi
 fi
 
@@ -973,12 +1006,15 @@ else
 		do
 			printf "\n  ${RED}%s${RESET}\n" "$label"
 			cat "$log"
+			printf "VALGRIND / %s: memory errors | %s\n" \
+				"$label" "$log" >> "$FAILED_TESTS"
 		done < "$VG_ERRORS"
 
 		ALL_ERRORS=$((ALL_ERRORS + VG_ERROR_COUNT))
-		ALL_TOTAL=$((ALL_TOTAL + VG_ERROR_COUNT))
 	fi
 fi
+
+ALL_TOTAL=$((ALL_TOTAL + VG_RUNS))
 
 section "6. FINAL REPORT"
 
