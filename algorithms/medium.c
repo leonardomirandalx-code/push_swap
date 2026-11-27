@@ -75,7 +75,6 @@ void	medium_algorithm(t_data *data)
 
 	if (!data || !data->a || is_sorted(data->a))
 		return ;
-	normalize(data);
 	high = stacksize(data->a);
 	chunk = 1;
 	while (chunk <= (high - 1) / chunk)
