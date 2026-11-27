@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 make all || exit 1
@@ -323,6 +322,7 @@ run_bench()
 	local numbers
 	local sample=0
 	local total=0
+	local successful=0
 	local worst=0
 	local operations
 	local average
@@ -336,34 +336,38 @@ run_bench()
 		sample=$((sample + 1))
 		read -r -a args <<< "$numbers"
 
-		run_push_swap "BENCHMARK / $mode / $size numbers / sample $sample" \
-			--bench "$mode" "${args[@]}"
+		if run_push_swap "BENCHMARK / $mode / $size / sample $sample" \
+			--bench "$mode" "${args[@]}"; then
+			if [ "$CHECKER_AVAILABLE" -eq 1 ] \
+				&& ! check_operations "$mode / $size / sample $sample" \
+				"${args[@]}"; then
+				failed=1
+				printf "  ${RED}[FAILED SEQUENCE]${RESET} %s\n" "$numbers"
+				record_failure "BENCHMARK / $mode / $size / sample $sample: checker failed | $numbers"
+			else
+				operations=$(wc -l < /tmp/ps_out)
+				operations=${operations//[[:space:]]/}
+				total=$((total + operations))
+				successful=$((successful + 1))
 
-		if [ $? -ne 0 ]; then
-			failed=1
-			record_failure "BENCHMARK / $mode / $size / sample $sample: push_swap failed"
-		else
-			operations=$(wc -l < /tmp/ps_out)
-			operations=${operations//[[:space:]]/}
-
-			total=$((total + operations))
-
-			if [ "$operations" -gt "$worst" ]; then
-				worst=$operations
-			fi
-
-			if [ "$CHECKER_AVAILABLE" -eq 1 ]; then
-				if ! check_operations "$mode / $size / sample $sample" "${args[@]}"; then
-					failed=1
-					record_failure "BENCHMARK / $mode / $size / sample $sample: checker failed"
+				if [ "$operations" -gt "$worst" ]; then
+					worst=$operations
 				fi
 			fi
+		else
+			failed=1
+			printf "  ${RED}[FAILED SEQUENCE]${RESET} %s\n" "$numbers"
+			record_failure "BENCHMARK / $mode / $size / sample $sample: push_swap failed | $numbers"
 		fi
 
 		ALL_TOTAL=$((ALL_TOTAL + 1))
 	done < "/tmp/ps_cases_$size"
 
-	average=$((total / RANDOM_RUNS))
+	if [ "$successful" -gt 0 ]; then
+		average=$((total / successful))
+	else
+		average=0
+	fi
 
 	if [ "$size" -eq 10 ]; then
 		if [ "$average" -le 10 ]; then
