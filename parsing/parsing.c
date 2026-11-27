@@ -50,8 +50,6 @@ int	validation(char **tokens, t_options *op, t_stack **stack_a)
 			return (1);
 		i++;
 	}
-	if (!*stack_a)
-		return (1);
 	return (is_dup(*stack_a));
 }
 
@@ -77,5 +75,5 @@ int	parse_args(int argc, char **argv, t_options *options,
 		free_words(splits, count);
 		i++;
 	}
-	return (0);
+	return (!*stack_a);
 }
