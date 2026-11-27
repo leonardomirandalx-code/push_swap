@@ -31,6 +31,7 @@ CHECKER_AVAILABLE=0
 BONUS_CHECKER_AVAILABLE=0
 BONUS_CHECKER_VALID=0
 NORM_AVAILABLE=0
+NORM_STATUS="SKIP"
 
 if command -v valgrind >/dev/null 2>&1; then
 	VG_AVAILABLE=1
@@ -447,8 +448,10 @@ run_norminette()
 
 	if [ "$status" -eq 0 ]; then
 		printf "${GREEN}PASS${RESET} — Norminette\n"
+		NORM_STATUS="PASS"
 	else
 		printf "${RED}FAIL${RESET} — Norminette\n"
+		NORM_STATUS="FAIL"
 		cat "$NORM_LOG"
 		record_failure "NORMINETTE: errors found"
 	fi
@@ -1002,7 +1005,11 @@ else
 	printf "  Valgrind: ${RED}FAIL${RESET}\n"
 fi
 
-if [ "$NORM_AVAILABLE" -eq 0 ]; then
+if [ "$NORM_STATUS" = "PASS" ]; then
+	printf "  Norminette: ${GREEN}PASS${RESET}\n"
+elif [ "$NORM_STATUS" = "FAIL" ]; then
+	printf "  Norminette: ${RED}FAIL${RESET}\n"
+else
 	printf "  Norminette: ${YELLOW}SKIP${RESET}\n"
 fi
 
@@ -1021,5 +1028,3 @@ rm -f /tmp/ps_ref_out /tmp/ps_ref_err
 rm -f /tmp/ps_bonus_out /tmp/ps_bonus_err
 rm -f "$FAILED_TESTS" "$VG_ERRORS"
 rm -rf "$VG_LOG_DIR"
-
-
