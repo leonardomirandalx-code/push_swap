@@ -50,6 +50,8 @@ int	validation(char **tokens, t_options *op, t_stack **stack_a)
 			return (1);
 		i++;
 	}
+	if (!*stack_a)
+		return (1);
 	return (is_dup(*stack_a));
 }
 
