@@ -36,7 +36,6 @@ typedef struct s_options
 	int			bench;
 }	t_options;
 
-//estrutura bench
 typedef enum e_actions
 {
 	SA,
